@@ -40,6 +40,7 @@ public class Benchmark {
 	
 	static WritableWorkbook table;
 	static WritableSheet sheetMainResults;
+	static ArrayList<WritableSheet> sheets;
 
 	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException, RowsExceededException, WriteException {
 		
@@ -70,6 +71,23 @@ public class Benchmark {
 			e.printStackTrace();
 		}
 		
+		sheets = new ArrayList<WritableSheet>();
+		sheets.add(table.createSheet("Uniform Mutation", 1));
+		sheets.add(table.createSheet("Non Uniform Mutation b = 0.05", 2));
+		sheets.add(table.createSheet("Non Uniform Mutation b = 1.0", 3));
+		sheets.add(table.createSheet("Non Uniform Mutation b = 10.0", 4));
+		sheets.add(table.createSheet("Non Uniform Mutation b = 20.0", 5));
+		sheets.add(table.createSheet("Gaussian Mutation σ = 0.05", 6));
+		sheets.add(table.createSheet("Gaussian Mutation σ = 0.5", 7));
+		sheets.add(table.createSheet("Gaussian Mutation σ = 1.0", 8));
+		sheets.add(table.createSheet("Gaussian Mutation σ = 10.0", 9));
+		sheets.add(table.createSheet("Gaussian Mutation 1 5 rule", 10));
+		
+		for (WritableSheet sheet : sheets) {
+			Label labelAverage = new Label(0, 0, "Average over 30 runs");
+			sheet.addCell(labelAverage);
+		}
+		
 		
 		String dirName = "Output/";
 		new File(dirName).mkdirs();
@@ -80,7 +98,7 @@ public class Benchmark {
 				generationScore = new double[numberOfGenerations];
 		
 				String fileName = dirName + Integer.toString(i) + "_" + Integer.toString(j) + ".txt";
-				evolutionStrategy(fileName, i);
+				evolutionStrategy(fileName, i, j);
 		
 				//for (double gene : individual) {
 					//System.out.println(gene);
@@ -91,7 +109,25 @@ public class Benchmark {
 				sheetMainResults.addCell(bestScore); 
 
 			}
-			System.out.println("Fim");
+		}
+		
+		for (WritableSheet sheet : sheets) {
+			for (int i = 0; i < numberOfGenerations; i++) {
+				String formula = "AVERAGE(B" + Integer.toString(i+2) + ":AE" + Integer.toString(i+2) + ")";
+				Formula averageCell = new Formula(0, i+1, formula);
+				sheet.addCell(averageCell);
+			}
+		}
+		
+		String[] letters = {"B","C","D","E","F","G","H","I","J","K"};
+		for (int i = 0; i < numberOfFunctions; i++) {
+			String avgFormula = "AVERAGE(" + letters[i] + "3:" + letters[i] + "32)";
+			String sdFormula = "STDEV(" + letters[i] + "3:" + letters[i] + "32)";
+			Formula averageCell = new Formula(i+1, 32, avgFormula);
+			Formula sdCell = new Formula(i+1, 33, sdFormula);
+			sheetMainResults.addCell(averageCell);
+			sheetMainResults.addCell(sdCell);
+			
 		}
 		
 		try {
@@ -100,9 +136,10 @@ public class Benchmark {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Fim");
 	}
 	
-	public static void evolutionStrategy(String fileName, int function) throws FileNotFoundException, UnsupportedEncodingException {
+	public static void evolutionStrategy(String fileName, int function, int currentRun) throws FileNotFoundException, UnsupportedEncodingException, RowsExceededException, WriteException {
 		Random r = new Random();
 		PrintWriter writer = new PrintWriter(fileName, "UTF-8");
 		individual = createRandomIndividual(individual);
@@ -170,7 +207,8 @@ public class Benchmark {
 				goodMutations = 0.0;
 			}
 			
-			
+			Number currentScore = new Number(currentRun+1, generation+1, sphere(individual)); 
+			sheets.get(function).addCell(currentScore); 
 			writer.println(sphere(individual));
 		}
 		writer.close();
