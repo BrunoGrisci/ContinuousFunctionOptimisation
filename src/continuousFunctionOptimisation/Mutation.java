@@ -8,8 +8,8 @@ public class Mutation {
 		Random r = new Random();
 		int selectedGene =  r.nextInt(Benchmark.numberOfGenes);
 		double newGene = Benchmark.rangeMin + (Benchmark.rangeMax - Benchmark.rangeMin) * r.nextDouble();
-		System.out.println(selectedGene);
-		System.out.println(newGene);
+		//System.out.println(selectedGene);
+		//System.out.println(newGene);
 		individual[selectedGene] = newGene;
 		return individual;
 	}

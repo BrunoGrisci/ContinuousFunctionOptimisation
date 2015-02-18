@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Date; 
 
@@ -36,31 +37,36 @@ public class Benchmark {
 	static final int GAUSSIAN_MUTATION_1 = 7;
 	static final int GAUSSIAN_MUTATION_10 = 8;
 	static final int GAUSSIAN__MUTATION_1_5_RULE = 9;
+	
+	static WritableWorkbook table;
+	static WritableSheet sheetMainResults;
 
 	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException, RowsExceededException, WriteException {
-		// TODO Auto-generated method stub
 		
 		try {
-			WritableWorkbook table = Workbook.createWorkbook(new File("output.xls"));
-			WritableSheet sheetMainResults = table.createSheet("Average", 0);
-			Label labelUniformMutation = new Label(1, 0, "Uniform Mutation"); 
-			sheetMainResults.addCell(labelUniformMutation); 
-			Label labelNonUniformMutation005 = new Label(2, 0, "Non Uniform Mutation b = 0.05"); 
-			sheetMainResults.addCell(labelNonUniformMutation005);
+			table = Workbook.createWorkbook(new File("output.xls"));
+			sheetMainResults = table.createSheet("Average", 0);
 			
-			Label labelAverage = new Label(0, 31, "Average fitness value"); 
-			sheetMainResults.addCell(labelAverage);
-			Label labelStandardDeviation = new Label(0, 32, "Standard deviation"); 
-			sheetMainResults.addCell(labelStandardDeviation);
+			ArrayList<Label> tableLabels = new ArrayList<Label>();
+			tableLabels.add(new Label(0, 0, "Average fitness value and its standard deviation (over the 30 runs) after 5,000 iterations for each of the considered settings."));
+			tableLabels.add(new Label(1, 1, "Uniform Mutation"));
+			tableLabels.add(new Label(2, 1, "Non Uniform Mutation b = 0.05"));
+			tableLabels.add(new Label(3, 1, "Non Uniform Mutation b = 1.0"));
+			tableLabels.add(new Label(4, 1, "Non Uniform Mutation b = 10.0"));
+			tableLabels.add(new Label(5, 1, "Non Uniform Mutation b = 20.0"));
+			tableLabels.add(new Label(6, 1, "Gaussian Mutation σ = 0.05"));
+			tableLabels.add(new Label(7, 1, "Gaussian Mutation σ = 0.5"));
+			tableLabels.add(new Label(8, 1, "Gaussian Mutation σ = 1.0"));
+			tableLabels.add(new Label(9, 1, "Gaussian Mutation σ = 10.0"));
+			tableLabels.add(new Label(10, 1, "Gaussian Mutation with 1/5-rule and initial σ uniformly distributed over [1, 100]"));
+			tableLabels.add(new Label(0, 32, "Average fitness value"));
+			tableLabels.add(new Label(0, 33, "Standard deviation"));
 			
-			Number number = new Number(3, 4, 3.1459); 
-			sheetMainResults.addCell(number);
-			
-			table.write(); 
-			table.close();
+			for (Label label : tableLabels) {
+				sheetMainResults.addCell(label);
+			}
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -80,9 +86,19 @@ public class Benchmark {
 					//System.out.println(gene);
 				//}
 				System.out.println(sphere(individual));
+				
+				Number bestScore = new Number(i+1, j+2, sphere(individual)); 
+				sheetMainResults.addCell(bestScore); 
+
 			}
-		
 			System.out.println("Fim");
+		}
+		
+		try {
+			table.write();
+			table.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
