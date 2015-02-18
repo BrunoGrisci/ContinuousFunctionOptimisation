@@ -2,9 +2,17 @@ package continuousFunctionOptimisation;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
+import java.util.Date; 
+
+import jxl.*; 
+import jxl.write.*; 
+import jxl.write.Number;
+import jxl.write.biff.RowsExceededException;
+import jxl.read.biff.BiffException;
 
 public class Benchmark {
 	
@@ -28,11 +36,34 @@ public class Benchmark {
 	static final int GAUSSIAN_MUTATION_1 = 7;
 	static final int GAUSSIAN_MUTATION_10 = 8;
 	static final int GAUSSIAN__MUTATION_1_5_RULE = 9;
-	
-	
 
-	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
+	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException, RowsExceededException, WriteException {
 		// TODO Auto-generated method stub
+		
+		try {
+			WritableWorkbook table = Workbook.createWorkbook(new File("output.xls"));
+			WritableSheet sheetMainResults = table.createSheet("Average", 0);
+			Label labelUniformMutation = new Label(1, 0, "Uniform Mutation"); 
+			sheetMainResults.addCell(labelUniformMutation); 
+			Label labelNonUniformMutation005 = new Label(2, 0, "Non Uniform Mutation b = 0.05"); 
+			sheetMainResults.addCell(labelNonUniformMutation005);
+			
+			Label labelAverage = new Label(0, 31, "Average fitness value"); 
+			sheetMainResults.addCell(labelAverage);
+			Label labelStandardDeviation = new Label(0, 32, "Standard deviation"); 
+			sheetMainResults.addCell(labelStandardDeviation);
+			
+			Number number = new Number(3, 4, 3.1459); 
+			sheetMainResults.addCell(number);
+			
+			table.write(); 
+			table.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 		String dirName = "Output/";
 		new File(dirName).mkdirs();
