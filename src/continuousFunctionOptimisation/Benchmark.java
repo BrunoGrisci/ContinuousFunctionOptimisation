@@ -7,13 +7,21 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Date; 
 
 import jxl.*; 
+import jxl.biff.formula.FormulaException;
+import jxl.read.biff.BiffException;
 import jxl.write.*; 
 import jxl.write.Number;
 import jxl.write.biff.RowsExceededException;
-import jxl.read.biff.BiffException;
+
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.RefineryUtilities;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 public class Benchmark {
 	
@@ -42,7 +50,7 @@ public class Benchmark {
 	static WritableSheet sheetMainResults;
 	static ArrayList<WritableSheet> sheets;
 
-	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException, RowsExceededException, WriteException {
+	public static void main(String[] args) throws RowsExceededException, WriteException, BiffException, IOException {
 		
 		try {
 			table = Workbook.createWorkbook(new File("output.xls"));
@@ -88,7 +96,6 @@ public class Benchmark {
 			sheet.addCell(labelAverage);
 		}
 		
-		
 		String dirName = "Output/";
 		new File(dirName).mkdirs();
 		
@@ -103,7 +110,7 @@ public class Benchmark {
 				//for (double gene : individual) {
 					//System.out.println(gene);
 				//}
-				System.out.println(sphere(individual));
+				//System.out.println(sphere(individual));
 				
 				Number bestScore = new Number(i+1, j+2, sphere(individual)); 
 				sheetMainResults.addCell(bestScore); 
@@ -130,13 +137,15 @@ public class Benchmark {
 			
 		}
 		
+		
+		table.write();
 		try {
-			table.write();
 			table.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Fim");
+
+		System.out.println("The end");
 	}
 	
 	public static void evolutionStrategy(String fileName, int function, int currentRun) throws FileNotFoundException, UnsupportedEncodingException, RowsExceededException, WriteException {
@@ -229,4 +238,5 @@ public class Benchmark {
 		}
 		return individual;
 	}
+	
 }
