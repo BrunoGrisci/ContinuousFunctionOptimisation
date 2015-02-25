@@ -1,3 +1,11 @@
+/*Bruno Iochins Grisci
+Student ID: 149778
+University of Birmingham
+Nature Inspired Optimisation – 06-26949
+Nature-Inspired Optimisation (Extended) – 06-26948
+Course Work I (10%): Programming Assignment
+Continuous Function Optimisation*/
+
 package continuousFunctionOptimisation;
 
 import java.io.File;
@@ -19,6 +27,7 @@ import org.jfree.ui.RefineryUtilities;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+//Class adapted from http://www.tutorialspoint.com/jfreechart/jfreechart_line_chart.htm
 public class LineChart_AWT extends ApplicationFrame {
    public LineChart_AWT( String applicationTitle, 
 		   				 String chartTitle,

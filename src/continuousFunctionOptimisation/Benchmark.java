@@ -1,3 +1,11 @@
+/*Bruno Iochins Grisci
+Student ID: 149778
+University of Birmingham
+Nature Inspired Optimisation – 06-26949
+Nature-Inspired Optimisation (Extended) – 06-26948
+Course Work I (10%): Programming Assignment
+Continuous Function Optimisation*/
+
 package continuousFunctionOptimisation;
 
 import java.io.File;
@@ -53,6 +61,8 @@ public class Benchmark {
 	public static void main(String[] args) throws RowsExceededException, WriteException, BiffException, IOException {
 		
 		try {
+			
+			//Initialize the file with the sheets
 			table = Workbook.createWorkbook(new File("output.xls"));
 			sheetMainResults = table.createSheet("Average", 0);
 			
@@ -79,6 +89,7 @@ public class Benchmark {
 			e.printStackTrace();
 		}
 		
+		//Add labels
 		sheets = new ArrayList<WritableSheet>();
 		sheets.add(table.createSheet("Uniform Mutation", 1));
 		sheets.add(table.createSheet("Non Uniform Mutation b = 0.05", 2));
@@ -99,18 +110,16 @@ public class Benchmark {
 		String dirName = "Output/";
 		new File(dirName).mkdirs();
 		
+		//For loop for the different mutation methods
 		for (int i = 0; i < numberOfFunctions; i++) {
+			//For loop for the number of trails
 			for (int j = 0; j < numberOfExperiments; j++) {
 				individual = new double[numberOfGenes];
 				generationScore = new double[numberOfGenerations];
 		
 				String fileName = dirName + Integer.toString(i) + "_" + Integer.toString(j) + ".txt";
+				//Here the optimisation takes place
 				evolutionStrategy(fileName, i, j);
-		
-				//for (double gene : individual) {
-					//System.out.println(gene);
-				//}
-				//System.out.println(sphere(individual));
 				
 				Number bestScore = new Number(i+1, j+2, sphere(individual)); 
 				sheetMainResults.addCell(bestScore); 
@@ -118,6 +127,7 @@ public class Benchmark {
 			}
 		}
 		
+		//Write average in sheet
 		for (WritableSheet sheet : sheets) {
 			for (int i = 0; i < numberOfGenerations; i++) {
 				String formula = "AVERAGE(B" + Integer.toString(i+2) + ":AE" + Integer.toString(i+2) + ")";
@@ -126,6 +136,7 @@ public class Benchmark {
 			}
 		}
 		
+		//Add the average and standard deviation to first sheet
 		String[] letters = {"B","C","D","E","F","G","H","I","J","K"};
 		for (int i = 0; i < numberOfFunctions; i++) {
 			String avgFormula = "AVERAGE(" + letters[i] + "3:" + letters[i] + "32)";
@@ -136,7 +147,6 @@ public class Benchmark {
 			sheetMainResults.addCell(sdCell);
 			
 		}
-		
 		
 		table.write();
 		try {
@@ -149,6 +159,7 @@ public class Benchmark {
 	}
 	
 	public static void evolutionStrategy(String fileName, int function, int currentRun) throws FileNotFoundException, UnsupportedEncodingException, RowsExceededException, WriteException {
+		//Optimisation function
 		Random r = new Random();
 		PrintWriter writer = new PrintWriter(fileName, "UTF-8");
 		individual = createRandomIndividual(individual);
@@ -157,6 +168,7 @@ public class Benchmark {
 		double n = 10.0;
 		double stepSize = 1.0 + (100.0 - 1.0) * r.nextDouble();
 		
+		//For loop for the number of iterations
 		for (int generation = 0; generation < numberOfGenerations; generation++) {
 			offspring = new double[numberOfGenes];
 			
@@ -196,6 +208,7 @@ public class Benchmark {
 					break;
 			
 			}
+			//This code is used by the gaussian mutation with 1/5-rule
 			if (sphere(offspring) < sphere(individual)) {
 				individual = offspring;
 				goodMutations = goodMutations + 1;
@@ -206,11 +219,9 @@ public class Benchmark {
 			if (badMutations + goodMutations == n) {
 				if (goodMutations/n > (1/5)) {
 					stepSize = stepSize * 2.0;
-					//System.out.println(stepSize);
 				}
 				if (goodMutations/n < (1/5)) {
 					stepSize = stepSize/2.0;
-					//System.out.println(stepSize);
 				}
 				badMutations = 0.0;
 				goodMutations = 0.0;
@@ -224,6 +235,7 @@ public class Benchmark {
 	}
 
 	public static double sphere(double[] individual) {
+		//Function that returns the fitness value
 		double score = 0.0;
 		for (double gene : individual) {
 			score = score + Math.pow(gene, 2);
@@ -232,6 +244,7 @@ public class Benchmark {
 	}
 	
 	public static double[] createRandomIndividual(double[] individual) {
+		//It creates a new individual
 		for (int gene = 0; gene < numberOfGenes; gene++) {
 			Random r = new Random();
 			individual[gene] = rangeMin + (rangeMax - rangeMin) * r.nextDouble();

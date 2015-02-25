@@ -1,15 +1,23 @@
+/*Bruno Iochins Grisci
+Student ID: 149778
+University of Birmingham
+Nature Inspired Optimisation – 06-26949
+Nature-Inspired Optimisation (Extended) – 06-26948
+Course Work I (10%): Programming Assignment
+Continuous Function Optimisation*/
+
 package continuousFunctionOptimisation;
 
 import java.util.Random;
 
 public class Mutation {
 	
+	//This class contains the implementation of the methods for the mutation operators
+	
 	public static double[] uniformMutation (double[] individual) {
 		Random r = new Random();
 		int selectedGene =  r.nextInt(Benchmark.numberOfGenes);
 		double newGene = Benchmark.rangeMin + (Benchmark.rangeMax - Benchmark.rangeMin) * r.nextDouble();
-		//System.out.println(selectedGene);
-		//System.out.println(newGene);
 		individual[selectedGene] = newGene;
 		return individual;
 	}
@@ -17,9 +25,9 @@ public class Mutation {
 	public static double[] nonUniformMutation (double[] individual, int currentGeneration, double b) {
 		Random r = new Random();
 		int selectedGene =  r.nextInt(Benchmark.numberOfGenes);
-		double gama = 1.0 * r.nextDouble();
+		double tau = 1.0 * r.nextDouble();
 		
-		if (gama >= 0.5) {
+		if (tau >= 0.5) {
 			individual[selectedGene] = individual[selectedGene] + delta(currentGeneration, 100.0 - individual[selectedGene], b);
 			
 		}
@@ -30,11 +38,12 @@ public class Mutation {
 		return individual;
 	}
 	
-	private static double delta (int currentGeneration, double y, double b) {
+	private static double delta (double currentGeneration, double y, double b) {
+		//Method used by non uniform mutation
 		Random ran = new Random();
 		double r = 1.0 * ran.nextDouble();
 		
-		return y * Math.pow(1 - Math.pow(r, 1 - currentGeneration/Benchmark.numberOfGenerations), b);
+		return y * Math.pow(1.0 - Math.pow(r, 1.0 - (currentGeneration/Benchmark.numberOfGenerations)), b);
 	}
 	
 	public static double[] gaussianMutation (double[] individual, double stepSize) {
