@@ -211,16 +211,16 @@ public class Benchmark {
 			//This code is used by the gaussian mutation with 1/5-rule
 			if (sphere(offspring) < sphere(individual)) {
 				individual = offspring;
-				goodMutations = goodMutations + 1;
+				goodMutations = goodMutations + 1.0;
 			}
 			else {
-				badMutations = badMutations + 1;
+				badMutations = badMutations + 1.0;
 			}
 			if (badMutations + goodMutations == n) {
-				if (goodMutations/n > (1/5)) {
+				if (goodMutations/n > (1.0/5.0)) {
 					stepSize = stepSize * 2.0;
 				}
-				if (goodMutations/n < (1/5)) {
+				if (goodMutations/n < (1.0/5.0)) {
 					stepSize = stepSize/2.0;
 				}
 				badMutations = 0.0;
